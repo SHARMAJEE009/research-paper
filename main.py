@@ -148,3 +148,14 @@ def run_pipeline():
 
 if __name__ == "__main__":
     run_pipeline()
+
+# Top-level entrypoint export for cloud deployment platforms (Vercel / WSGI / Serverless)
+def handler(request=None, *args, **kwargs):
+    return {
+        "statusCode": 200,
+        "headers": {"Content-Type": "text/html; charset=utf-8"},
+        "body": "Indian Academic Stress Research Dashboard is served statically via index.html."
+    }
+
+app = handler
+application = handler

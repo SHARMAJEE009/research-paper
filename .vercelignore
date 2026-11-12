@@ -1,0 +1,10 @@
+# Ignore local Python scripts and dependencies from Vercel Serverless Function detection
+*.py
+requirements.txt
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
