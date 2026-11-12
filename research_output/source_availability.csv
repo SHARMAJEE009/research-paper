@@ -1,0 +1,27 @@
+﻿publisher_name,source_type,earliest_available_year,latest_available_year,data_source,limitations
+The Times of India,National English Newspaper,2001,2025,"Google News RSS, GDELT Project API v2, Kaggle TOI Archive (therohk)",Full historical text 2001-2015 requires local Kaggle TOI dump; live RSS/GDELT covers 2017-2025; pre-2001 requires physical microfilm.
+The Hindu,National English Newspaper,2009,2025,"Google News RSS, GDELT Project API v2, Web Archives",Digital archive paywalled for pre-2009 articles; public RSS/GDELT covers 2017-2025; 2000-2008 requires institutional archive access.
+Hindustan Times,National English Newspaper,2012,2025,"Google News RSS, GDELT Project API v2",Archive reorganizations broke pre-2012 permalinks; live feeds capture 2017 onward; 2000-2011 requires manual library research.
+The Indian Express,National English Newspaper,2011,2025,"Google News RSS, GDELT Project API v2",Modern CMS started ~2011; dynamic search interface blocks automated scraping; GDELT/RSS covers 2017-2025; 2000-2010 requires physical library search.
+The Economic Times,Financial Newspaper,2010,2025,"Google News RSS, GDELT Project API v2",Focus primarily on business/edtech; pre-2010 education coverage sparse in digital index.
+The Telegraph India,Regional/National English Newspaper,2014,2025,"Google News RSS, GDELT Project API v2",Eastern India focus; website redesigned in 2018 resulting in broken pre-2014 links.
+Deccan Herald,South India English Newspaper,2013,2025,"Google News RSS, GDELT Project API v2",Strong Karnataka/South India student coverage; digital searchable archive from ~2013.
+The Tribune,North India English Newspaper,2011,2025,"Google News RSS, GDELT Project API v2",Punjab/Haryana/Himachal education coverage; pre-2011 edition in plain HTML archive.
+The New Indian Express,South India English Newspaper,2012,2025,"Google News RSS, GDELT Project API v2",Extensive Tele-MANAS and student counseling coverage; digital archive active 2012-2025.
+The Statesman,National English Newspaper,2015,2025,"Google News RSS, GDELT Project API v2",Pre-2015 online archives offline or not indexed.
+Dainik Jagran,National Hindi Newspaper,2015,2025,"Google News RSS, GDELT Project API v2",Hindi Unicode coverage online expanded after 2014; pre-2014 epapers in non-Unicode fonts; 2000-2014 requires print research.
+Amar Ujala,National Hindi Newspaper,2016,2025,"Google News RSS, GDELT Project API v2",Digital archive accessible 2016-2025; early 2000s editions only available in printed hard copies.
+Dainik Bhaskar,National Hindi Newspaper,2016,2025,"Google News RSS, GDELT Project API v2",Mobile app wall on web platform; digital indexing reliable from 2016 onward.
+Hindustan (Live Hindustan),National Hindi Newspaper,2015,2025,"Google News RSS, GDELT Project API v2",Hindi language web edition launched modern CMS in 2015.
+Navbharat Times,National Hindi Newspaper,2014,2025,"Google News RSS, GDELT Project API v2",Part of Times Group; Hindi digital archive indexed from 2014.
+NDTV,TV News Channel,2010,2025,"Google News RSS, GDELT Project API v2",Broadcast transcripts not fully digitized; web news reports available 2010-2025.
+India Today,TV News Channel & Magazine,2011,2025,"Google News RSS, GDELT Project API v2",Education portal active from 2011; extensive coverage of board and competitive exams.
+ABP News,TV News Channel,2013,2025,"Google News RSS, GDELT Project API v2",Rebranded from Star News in 2012; archives pre-2012 indexed under legacy domain.
+News18,TV News Channel & Digital Portal,2014,2025,"Google News RSS, GDELT Project API v2",Consolidated Network18 portals in 2016; prior reports under IBNLive.
+Zee News,TV News Channel,2013,2025,"Google News RSS, GDELT Project API v2",Web stories available 2013-2025; earlier video broadcasts not indexed in text.
+The Quint,Digital News Portal,2015,2025,"Google News RSS, GDELT Project API v2",Founded in 2015; complete archive available for its active lifespan.
+Scroll.in,Digital News Portal,2014,2025,"Google News RSS, GDELT Project API v2",Founded in 2014; complete archive available for its active lifespan.
+BBC News Hindi,Digital News Portal,2012,2025,"Google News RSS, GDELT Project API v2",Coverage focused on national policies and student counseling helplines.
+GDELT Project 2.0 Doc API,Global Automated News Monitoring API,2017,2025,api.gdeltproject.org,Doc API coverage starts in Feb 2017; public endpoint experienced rate-limiting / connect timeouts during run.
+Media Cloud API,Academic News Database API,2014,2025,search.mediacloud.org,Requires user API key token (MEDIACLOUD_API_KEY) in environment; not configured in current execution.
+Kaggle TOI News Headlines Dataset,Open Historical News Corpus,2001,2022,Kaggle (therohk / Rohit Kulkarni),Requires Kaggle user authentication API token or manual download of 250MB zip file; covers only Times of India headlines.

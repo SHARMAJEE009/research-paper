@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Coverage of Academic Stress in India (2000–2025) | Research Dashboard</title>
+  
+  <!-- Dashboard Stylesheet -->
+  <link rel="stylesheet" href="dashboard_assets/dashboard.css">
+  
+  <!-- Vendor Scripts (CDN with Local Fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script>window.Chart || document.write('<script src="dashboard_assets/chart.umd.min.js"><\/script>')</script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script>window.Papa || document.write('<script src="dashboard_assets/papaparse.min.js"><\/script>')</script>
+
+  <!-- Embedded Dataset Payload (Guarantees zero-config instant load on direct file:// double-click) -->
+  <script src="dashboard_assets/embedded_data.js"></script>
+</head>
+<body>
+
+  <!-- Loading Spinner Overlay -->
+  <div id="loadingSpinner" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(2px);">
+    <div style="background:var(--bg-card); padding:1.5rem 2rem; border-radius:12px; display:flex; align-items:center; gap:1rem; box-shadow:var(--shadow-lg); border:1px solid var(--border-color);">
+      <div style="width:24px; height:24px; border:3px solid var(--border-color); border-top-color:var(--primary); border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+      <span style="font-weight:600; font-size:0.9rem; color:var(--text-primary);">Processing Academic Dataset...</span>
+    </div>
+  </div>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+
+  <div class="dashboard-container">
+    
+    <!-- Sidebar Navigation & Filter Controls -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <span class="brand-badge">Academic Research</span>
+        <h2 class="sidebar-title">Indian News Media Stress Corpus</h2>
+        <p class="sidebar-subtitle">Structural Topic Modeling (2000–2025)</p>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-label">Navigation</span>
+        <a href="#overview" class="nav-item active">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Overview & KPIs
+        </a>
+        <a href="#yearly-coverage" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Yearly Coverage
+        </a>
+        <a href="#newspaper-coverage" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+          Newspapers & Channels
+        </a>
+        <a href="#thematic-categories" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          Taxonomy & Categories
+        </a>
+        <a href="#articles-table" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Article Explorer
+        </a>
+      </nav>
+
+      <!-- Interactive Filters Controls -->
+      <div class="sidebar-filters">
+        <span class="nav-label" style="padding:0;">Interactive Filters</span>
+
+        <!-- Year Range Slider -->
+        <div class="filter-group">
+          <div class="filter-label">
+            <span>Publication Year Span</span>
+            <span id="yearSliderReadout" style="color:var(--primary); font-weight:700;">2000 – 2025</span>
+          </div>
+          <input type="range" id="yearSlider" class="year-range-slider" min="2000" max="2025" value="2000" step="1">
+        </div>
+
+        <!-- Quick Period Select Buttons -->
+        <div class="filter-group">
+          <span class="filter-label">Quick Select Periods</span>
+          <div class="filter-pills">
+            <button class="filter-pill year-quick-btn active" data-range="all">All (2000–25)</button>
+            <button class="filter-pill year-quick-btn" data-range="2025">2025 Peak</button>
+            <button class="filter-pill year-quick-btn" data-range="2024">2024</button>
+            <button class="filter-pill year-quick-btn" data-range="2023">2023</button>
+            <button class="filter-pill year-quick-btn" data-range="2018-2022">2018–22</button>
+            <button class="filter-pill year-quick-btn" data-range="pre-2017">Pre-2017</button>
+          </div>
+        </div>
+
+        <!-- Newspaper Dropdown -->
+        <div class="filter-group">
+          <label for="filterNewspaper" class="filter-label">Filter by Newspaper</label>
+          <select id="filterNewspaper" class="filter-select">
+            <option value="all">Loading newspapers...</option>
+          </select>
+        </div>
+
+        <!-- Media Medium Filter -->
+        <div class="filter-group">
+          <label for="filterMedium" class="filter-label">Filter by Media Type</label>
+          <select id="filterMedium" class="filter-select">
+            <option value="all">All Media Types (Print, TV, Digital)</option>
+            <option value="Newspaper">Print Newspapers Broadsheets</option>
+            <option value="TV News Channel">Television News Channels</option>
+            <option value="Digital Publication">Digital-Native Portals</option>
+          </select>
+        </div>
+
+        <!-- Thematic Category Filter Pills -->
+        <div class="filter-group">
+          <span class="filter-label">Thematic Category</span>
+          <div id="categoryPills" class="filter-pills">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <!-- Reset Button -->
+        <button id="btnResetFilters" class="btn-reset-filters">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Reset All Filters
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      
+      <!-- Top Sticky Navigation Bar -->
+      <header class="top-header">
+        <div class="header-left">
+          <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          
+          <div class="header-meta">
+            <div class="status-indicator">
+              <span class="status-dot"></span>
+              <span id="activeFilterCount">Loading Articles...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Live Global Search -->
+          <div class="table-search-box" style="width:240px; display:none;" id="headerSearchWrapper">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="globalSearchInput" placeholder="Quick search headline...">
+          </div>
+
+          <!-- Upload Custom CSV Modal Trigger -->
+          <button id="btnOpenUpload" class="action-btn" title="Load custom CSV dataset">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Upload CSV</span>
+          </button>
+
+          <!-- Theme Toggle Button -->
+          <button id="themeToggleBtn" class="action-btn" title="Toggle Light/Dark Theme">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <span>Theme</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dashboard Body Content -->
+      <main class="dashboard-content">
+        
+        <!-- Welcome / Research Banner -->
+        <section id="overview" class="dashboard-banner">
+          <div class="banner-text">
+            <h1>Indian News Media Coverage of Academic Stress (2000–2025)</h1>
+            <p>An interactive computational analysis of 1000 verified news reports examining board examination anxiety, competitive exam pressures (JEE/NEET/UPSC), Kota coaching factories, and student mental health.</p>
+          </div>
+          <div class="banner-actions">
+            <a href="research_output/README.md" target="_blank" class="action-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Methodology README
+            </a>
+          </div>
+        </section>
+
+        <!-- KPI Cards Grid -->
+        <section class="kpi-grid">
+          <!-- KPI 1: Total Articles -->
+          <div class="kpi-card accent-indigo">
+            <div class="kpi-header">
+              <span class="kpi-title">Total Verified Articles</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpiTotalArticles">1000</div>
+            <div class="kpi-subtext">
+              <span class="badge neutral" id="kpiTotalSubtext">100% of entire corpus</span>
+            </div>
+          </div>
+
+          <!-- KPI 2: Peak Year -->
+          <div class="kpi-card accent-teal">
+            <div class="kpi-header">
+              <span class="kpi-title">Peak Coverage Year</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpiPeakYear">2025</div>
+            <div class="kpi-subtext">
+              <span class="badge positive" id="kpiPeakSubtext">676 articles (67.6% share)</span>
+            </div>
+          </div>
+
+          <!-- KPI 3: Lowest Reported Year -->
+          <div class="kpi-card accent-rose">
+            <div class="kpi-header">
+              <span class="kpi-title">Lowest Active Year</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpiLowestYear">2006</div>
+            <div class="kpi-subtext">
+              <span class="badge alert" id="kpiLowestSubtext">1 article (Pre-CMS Era)</span>
+            </div>
+          </div>
+
+          <!-- KPI 4: Leading Newspaper -->
+          <div class="kpi-card accent-amber">
+            <div class="kpi-header">
+              <span class="kpi-title">Leading Broadsheet</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" style="font-size:1.35rem;" id="kpiTopNewspaper">Times of India</div>
+            <div class="kpi-subtext">
+              <span class="badge neutral" id="kpiTopNewspaperSubtext">102 articles (10.2%)</span>
+            </div>
+          </div>
+
+          <!-- KPI 5: Leading TV Channel -->
+          <div class="kpi-card accent-blue">
+            <div class="kpi-header">
+              <span class="kpi-title">Leading TV Channel</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpiTopChannel">NDTV</div>
+            <div class="kpi-subtext">
+              <span class="badge neutral" id="kpiTopChannelSubtext">84 prime broadcasts</span>
+            </div>
+          </div>
+
+          <!-- KPI 6: Average Coverage -->
+          <div class="kpi-card accent-indigo">
+            <div class="kpi-header">
+              <span class="kpi-title">Average Annual Coverage</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpiAvgCoverage">38.5</div>
+            <div class="kpi-subtext" id="kpiAvgSubtext">articles / year (span: 26 yrs)</div>
+          </div>
+        </section>
+
+        <!-- Top 5 Most Reported Years Strip -->
+        <section class="top-years-banner">
+          <div class="top-years-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Top 5 Most Reported Years in Media:</span>
+          </div>
+          <div class="top-years-list" id="topYearsBadges">
+            <!-- Rendered dynamically via JS -->
+          </div>
+        </section>
+
+        <!-- Charts Grid Section 1: Yearly Coverage & Longitudinal Eras -->
+        <section id="yearly-coverage" class="charts-grid">
+          <!-- Chart 1: Year-Wise Coverage Bar & Line Combo -->
+          <div class="chart-card col-8">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3 class="chart-title">Year-Wise Media Coverage Trajectory (2000–2025)</h3>
+                <span class="chart-subtitle">Annual distribution of academic stress reports with 3-year moving average</span>
+              </div>
+              <div class="chart-actions">
+                <button class="chart-btn-toggle yearly-chart-mode-btn active" data-mode="combo">Bar & Trend</button>
+                <button class="chart-btn-toggle yearly-chart-mode-btn" data-mode="line">Area Curve</button>
+                <button class="chart-btn-toggle yearly-chart-mode-btn" data-mode="cumulative">Cumulative</button>
+              </div>
+            </div>
+            <div class="chart-container tall">
+              <canvas id="yearlyCoverageChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Media Eras Distribution -->
+          <div class="chart-card col-4">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3 class="chart-title">Longitudinal Media Eras</h3>
+                <span class="chart-subtitle">Historical shift from print gap to peak digital coverage</span>
+              </div>
+            </div>
+            <div class="chart-container tall">
+              <canvas id="erasChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Charts Grid Section 2: Newspapers & Categories -->
+        <section id="newspaper-coverage" class="charts-grid">
+          <!-- Chart 3: Top 15 Newspapers -->
+          <div class="chart-card col-7">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3 class="chart-title">Top 15 Indian Broadsheets & Publications</h3>
+                <span class="chart-subtitle">Volume ranking of academic stress articles by print media house</span>
+              </div>
+            </div>
+            <div class="chart-container tall">
+              <canvas id="newspaperChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 4: Thematic Categories -->
+          <div id="thematic-categories" class="chart-card col-5">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3 class="chart-title">Research Keyword Taxonomy</h3>
+                <span class="chart-subtitle">Distribution across 5 core academic distress categories</span>
+              </div>
+            </div>
+            <div class="chart-container tall">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Key Academic Insights Cards (Requirement 6) -->
+        <section class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-header">
+              <div class="insight-icon indigo">📌</div>
+              <h4 class="insight-title">The 2025 Inflection Point</h4>
+            </div>
+            <p class="insight-desc" id="insightPeakText">Loading dynamic insight...</p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <div class="insight-icon teal">🎯</div>
+              <h4 class="insight-title">Competitive Exams & Kota Hub</h4>
+            </div>
+            <p class="insight-desc" id="insightCoachingText">Loading dynamic insight...</p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <div class="insight-icon amber">📰</div>
+              <h4 class="insight-title">Broadsheet Media Dominance</h4>
+            </div>
+            <p class="insight-desc" id="insightPublisherText">Loading dynamic insight...</p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <div class="insight-icon rose">🏛️</div>
+              <h4 class="insight-title">Digital Archival Shift (2000–2025)</h4>
+            </div>
+            <p class="insight-desc" id="insightEraText">Loading dynamic insight...</p>
+          </div>
+        </section>
+
+        <!-- Searchable & Paginated Data Table (Requirement 5) -->
+        <section id="articles-table" class="table-card">
+          <div class="table-header-controls">
+            <div>
+              <h3 class="chart-title">Article Explorer & Audit Records</h3>
+              <span class="chart-subtitle">Search, inspect, and open verified Indian academic stress news reports</span>
+            </div>
+            <div class="table-search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="tableSearchInput" placeholder="Search by headline, keyword, or newspaper...">
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Doc ID</th>
+                  <th>Date</th>
+                  <th>Publication Source</th>
+                  <th>Headline (Click to Read)</th>
+                  <th>Thematic Category</th>
+                  <th>Matched Keyword</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="articleTableBody">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer-controls">
+            <span id="tableShowingText">Showing articles...</span>
+            <div class="pagination-controls" id="tablePagination">
+              <!-- Rendered dynamically via JS -->
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal for Custom CSV File Upload -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Upload or Swap News Dataset</h3>
+        <button class="modal-close-btn" id="btnCloseUpload">&times;</button>
+      </div>
+      <p style="font-size:0.85rem; color:var(--text-secondary);">Select or drag & drop any updated CSV dataset (e.g. <code>india_academic_stress_news_2000_2025_expanded.csv</code>) to dynamically recalculate all charts, rankings, and KPIs in real-time.</p>
+      
+      <div class="dropzone" id="dropzone">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="margin-bottom:0.75rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <p style="font-size:0.9rem; font-weight:600; color:var(--text-primary);">Click to select or drag & drop CSV file here</p>
+        <span style="font-size:0.78rem; color:var(--text-muted);">Supports standard CSV files with headers</span>
+        <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Controller Script -->
+  <script src="dashboard_assets/dashboard.js"></script>
+</body>
+</html>
+
